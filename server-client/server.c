@@ -83,6 +83,7 @@ void main()
             }
             printf("%s", buf);
             fflush(stdout);
+            write(conn_fd, buf, 10);
         }
         close(conn_fd);
     }
