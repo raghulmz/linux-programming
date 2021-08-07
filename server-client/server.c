@@ -24,11 +24,17 @@ stop_server(int signo)
     exit(0);
 }
 
+static void handle_sigpipe(int signo)
+{
+    printf("sigpipe received...\n");
+}
+
 void main()
 {
 
     printf("Starting server...\n");
     signal(SIGINT, stop_server);
+    signal(SIGPIPE, handle_sigpipe);
 
     // Create a socket
     socket_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -83,7 +89,10 @@ void main()
             }
             printf("%s", buf);
             fflush(stdout);
-            write(conn_fd, buf, 10);
+            if (write(conn_fd, buf, 10) < 0)
+            {
+                printf("Failed to write message to fd %d\n", conn_fd);
+            }
         }
         close(conn_fd);
     }
