@@ -52,7 +52,11 @@ int dequeue(queue_t *q)
     tmp = q->head;
     q->head = q->head->next;
     int val = tmp->value;
-    // free(tmp);
+    free(tmp);
+    if (!q->head)
+    {
+        q->tail = NULL;
+    }
     return val;
 }
 
@@ -72,7 +76,7 @@ void main()
     printf("q->tail->val: %d\n", (&q)->tail->value);
 
     print_queue(&q);
-    for (int j = 0; j < 15; j++)
+    for (int j = 0; j < 10; j++)
     {
         printf("Dequeue: %d\n", dequeue(&q));
         // add_node(&q, j);
