@@ -8,6 +8,8 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <string.h>
+#include <error.h>
+
 
 #define BACKLOG_LEN 10
 #define LISTEN_PORT 12345
@@ -20,7 +22,7 @@ stop_server(int signo)
     printf("\nSIGINT received, shutting down.\n");
     fflush(stdout);
     printf("Closing socket: %d \n", socket_fd);
-    close(socket_fd);
+    shutdown(socket_fd, SHUT_RDWR);
     exit(0);
 }
 
@@ -48,18 +50,16 @@ void main()
     // Bind
     if (bind(socket_fd, (struct sockaddr *)&my_addr, sizeof(my_addr)) == -1)
     {
-        printf("Error binding: %s \n", strerror(errno));
-        exit(-1);
+        error(1, errno, "Error binding: %d ", LISTEN_PORT);
     }
 
     // Listen
     if (listen(socket_fd, BACKLOG_LEN) == -1)
     {
-        printf("Error Listening: %s \n", strerror(errno));
-        exit(-1);
+        error(1, errno, "Error Listening: %d ", socket_fd);
     }
 
-    printf("Server is listening on port %d \n", LISTEN_PORT);
+    printf("Server is listening on port : %d \n", LISTEN_PORT);
     fflush(stdout);
 
     struct sockaddr_in peer_addr;
@@ -70,7 +70,7 @@ void main()
         int conn_fd = accept(socket_fd, (struct sockaddr *)&peer_addr, &len);
         if (conn_fd < 0)
         {
-            printf("Accept failed: %s\n", strerror(errno));
+            error(0, errno, "Accept failed: %d", conn_fd);
         }
         char buf[10];
         memset(buf, 0, sizeof(buf));
@@ -91,9 +91,9 @@ void main()
             fflush(stdout);
             if (write(conn_fd, buf, 10) < 0)
             {
-                printf("Failed to write message to fd %d\n", conn_fd);
+                error(0, errno, "Failed to write message to fd %d ", conn_fd);
             }
         }
-        close(conn_fd);
+        shutdown(conn_fd, SHUT_RDWR);
     }
 }
