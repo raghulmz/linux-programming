@@ -20,7 +20,7 @@ HELLO_strip = $(OUT_DIR)/hello_stripped
 HELLO_DY = $(OUT_DIR)/hello_dy
 
 # With debugging symbols
-HELLO_DEBUG = $(OUT_DIR)/hello_debugs
+HELLO_DEBUG = $(OUT_DIR)/hello_debug
 
 out-dir:
 	mkdir -p $(OUT_DIR)/
@@ -64,4 +64,4 @@ debug: $(HELLO) out-dir
 clean:
 	rm -rf $(OUT_DIR)
 
-all: link static dyn
+all: link static dyn debug
