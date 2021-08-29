@@ -2,6 +2,7 @@ CC=gcc
 
 OUT_DIR=./out
 
+# Source
 HELLO = hello.c
 # Preprocessed file
 HELLO_I = $(OUT_DIR)/hello.i
@@ -20,7 +21,7 @@ HELLO_strip = $(OUT_DIR)/hello_stripped
 HELLO_DY = $(OUT_DIR)/hello_dy
 
 # With debugging symbols
-HELLO_DEBUG = $(OUT_DIR)/hello_debug
+HELLO_DEBUG = $(OUT_DIR)/hello_debug	
 
 out-dir:
 	mkdir -p $(OUT_DIR)/
@@ -42,11 +43,11 @@ assemble: compile
 
 # 4:  
 link: assemble
-	$(CC) -o $(HELLO_D) $(HELLO_O)
+	$(CC) $(HELLO_O) -o $(HELLO_D) 
 
 # 5:  
 strip: link
-	strip -o $(HELLO_strip) $(HELLO_D)
+	strip $(HELLO_D) -o $(HELLO_strip)
 
 ########################################################################
 
@@ -62,6 +63,6 @@ debug: $(HELLO) out-dir
 	$(CC) -g -o $(HELLO_DEBUG) $(HELLO)
 
 clean:
-	rm -rf $(OUT_DIR)
+	rm --preserve-root -rf $(OUT_DIR)
 
 all: link static dyn debug
